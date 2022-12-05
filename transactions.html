@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Mini Project Store</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Mini Project Store</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="items.html">Items</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">Customers</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="transactions.html">Transactions</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+
+      <div class="float-end">
+        <a href="new_transaction.html" class="btn btn-primary">
+          <i class="fa fa-plus"></i> New Transaction
+        </a>
+      </div>
+
+      <h1>Transactions</h1>
+      <hr>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Invoice No.</th>
+            <th>Customer</th>
+            <th>Remarks</th>
+            <th>Total Amount</th>
+            <th class="text-center">...</th>
+          </tr>
+        </thead>
+        <tbody id="transactions"></tbody>
+      </table>
+
+    </div>
+
+
+    <script>
+
+      function getAllTransactions() {
+        fetch("http://localhost:8000/api/transactions")
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>renderTransactionTable(data.recent))
+            }
+          })
+      }
+
+      function renderTransactionTable(transactions) {
+        const tbody = $("#transactions")
+
+        transactions.forEach((t)=>{
+          const tr = $(document.createElement("tr"))
+
+          tr.append("<td>" + new Date(Date.parse(t.created_at)).toDateString() + "</td>")
+          tr.append("<td>" + t.invoice_no + "</td>")
+          tr.append("<td>" + t.customer.last_name + ", " + t.customer.first_name + "</td>")
+          tr.append("<td>" + t.remarks + "</td>")
+          tr.append("<td class='text-end'>" + t.totalAmount.toFixed(2) + "</td>")
+          tr.append("<td class='text-center'><a href='show_transaction.html?id=" + t.id + "' class='btn btn-sm btn-info'><i class='fa fa-eye'></i></a>")
+
+          tbody.append(tr)
+        })
+      }
+
+      $(document).ready(()=>{
+        getAllTransactions()
+
+        $("#save_btn").click(()=>{
+
+        })
+
+        $("#confirm_delete_transaction").click(()=>{
+
+        })
+      })
+
+    </script>
+</body>
+</html>

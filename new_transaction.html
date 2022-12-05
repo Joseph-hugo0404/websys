@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Mini Project Store</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Mini Project Store</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="items.html">Items</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">Customers</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="transactions.html">Transactions</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+      <h1>New Transaction</h1>
+      <hr>
+
+      <div class="row">
+        <div class="col-md-3">
+          <h3>Transaction Details</h3>
+
+          <div class="mb-3">
+            <label for="invoice_no">Invoice Number</label>
+            <input type="text" id="invoice_no" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label for="customer">Customer</label>
+            <select name="customer" id="customer" class="form-select">
+              <option value="">Select a customer</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="remarks">Remarks</label>
+            <input type="text" id="remarks" class="form-control">
+          </div>
+
+        </div>
+        <div class="col-md-9">
+          <div class="float-end d-flex">
+            <div class="input-group me-2 flex-grow-1">
+              <label for="item" class="input-group-text">Item</label>
+              <select name="item" id="item" class="form-select">
+                <option value="">Select item</option>
+              </select>
+            </div>
+            <div class="input-group me-2" style="width: 170px">
+              <label for="quantity" class="input-group-text">Qty</label>
+              <input type="number" id="quantity" min="1" max="1000" class="form-control">
+            </div>
+            <button class="btn btn-primary btn-sm" id="add_item">
+              <i class="fa fa-plus"></i>
+            </button>
+          </div>
+
+          <h3>Transaction Items</h3>
+          <hr>
+
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Description</th>
+                <th class="text-end">Price</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-end">SubTotal</th>
+              </tr>
+            </thead>
+            <tbody id="transactionItems"></tbody>
+            <tfoot>
+              <tr>
+                <th colspan="4">TOTAL</th>
+                <th id="totals" class="fw-bold text-end"></th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <hr>
+      <button class="float-end btn btn-lg btn-primary" id="save_transaction">
+        <i class="fa fa-save"></i> Save Transaction
+      </button>
+    </div>
+
+    <script>
+      var listOfItems = []
+      var transactionItems = []
+
+      function getCustomers() {
+        fetch('http://localhost:8000/api/customers')
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>renderCustomersSelect(data.customers))
+            }
+          })
+      }
+
+      function renderCustomersSelect(customers) {
+        const cust = $("#customer")
+        customers.forEach((c)=>{
+          const opt = $(document.createElement("option"))
+          opt.attr('value', c.id)
+          opt.text(c.last_name + ", " + c.first_name)
+          cust.append(opt)
+        })
+      }
+
+      function getItems() {
+        
+        fetch('http://localhost:8000/api/items')
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  listOfItems = data.items
+                  renderItems()
+                })
+            }
+          })
+      }
+
+      function renderItems() {
+        const itm = $("#item")
+
+        listOfItems.forEach((item, index)=>{
+          const opt = $(document.createElement('option'))
+          opt.attr('value', index)
+          opt.text(item.description)
+          itm.append(opt)
+        })
+      }
+
+      function renderTable() {
+        const tbody = $("#transactionItems")
+
+        tbody.empty()
+
+        var total = 0
+
+        transactionItems.forEach((item)=>{
+
+          const tr = $(document.createElement("tr"))
+          tr.append("<td>" + item.name + "</td>")
+          tr.append("<td>" + item.description + "</td>")
+          tr.append("<td class='text-end'>" + item.priced_at + "</td>")
+          tr.append("<td class='text-center'>" + item.quantity + "</td>")
+          tr.append("<td class='text-end'>" + (item.quantity*item.priced_at).toFixed(2) + "</td>")
+  
+          tbody.append(tr)
+
+          total += item.quantity*item.priced_at
+
+        })
+
+        $("#totals").text(total.toFixed(2))
+
+      }
+
+      $(document).ready(()=>{
+        getCustomers()
+        getItems()
+
+        $("#add_item").click(()=>{
+          const selectedItem = listOfItems[$("#item").val()]
+          const itm = {
+            "item_id": selectedItem.id,
+            "priced_at": selectedItem.price,
+            "quantity": $("#quantity").val(),
+            "name": selectedItem.name,
+            "description": selectedItem.description,
+          }
+
+          transactionItems.push(itm)
+          renderTable()
+        })
+
+        $("#save_transaction").click(()=>{
+          const data = {
+            "customer_id":$("#customer").val(),
+            "invoice_no":$("#invoice_no").val(),
+            "remarks": $("#remarks").val(),
+            "items": transactionItems
+          }
+
+          fetch('http://localhost:8000/api/transactions',{
+            credentials: "omit",
+            method: "POST",
+            body: JSON.stringify(data),
+            headers:{
+              "Accepte":"application/json",
+              "Content-Type":"application/json"
+            }
+          })
+          .then(response=>{
+            if(response.status==200) {
+              alert('Transaction has been saved.')
+              window.location='transactions.html'
+            }else {
+              console.log(response)
+            }
+          })
+        })
+      })
+
+    </script>
+</body>
+</html>

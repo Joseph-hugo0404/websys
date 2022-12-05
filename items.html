@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Mini Project Store</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Mini Project Store</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="items.html">Items</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">Customers</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="transactions.html">Transactions</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+      <div class="float-end">
+      
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+          <i class="fa fa-plus"></i> Create Item
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="createModalLabel">Create Item</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+              
+                <div class="mb-3">
+                  <label for="barcode">Bar Code</label>
+                  <input type="text" id="barcode" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="name">Item name</label>
+                  <input type="text" id="name" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="description">Description</label>
+                  <input type="text" id="description" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="price">Price</label>
+                  <input type="numeric" id="price" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="quantity">Quantity</label>
+                  <input type="text" id="quantity" class="form-control">
+                </div>
+                <div class="mb-3">
+                  <label for="name">Units</label>
+                  <select name="units" id="units" class="form-select">
+                    <option>Pieces</option>
+                    <option>Kilograms</option>
+                    <option>Grams</option>accusantium reprehenderit
+                    <option>Bottles</option>
+                    <option>Packs</option>
+                    <option>Litres</option>
+                    <option>Boxes</option>
+                    <option>Bundles</option>
+                    <option>Inches</option>
+                    <option>Meters</option>
+                    <option>Dozens</option>
+                  </select>
+                </div>
+                
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="save-btn" class="btn btn-primary">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <h1>Items</h1>
+      
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Description</th>
+            <th class='text-right'>Price</th>
+            <th class='text-right'>Quantity</th>
+            <th class="text-center">...</th>
+          </tr>
+        </thead>
+        <tbody id="items"></tbody>
+      </table>
+      
+    </div>
+
+    <script>
+
+      function getAllItems() {
+        fetch("http://localhost:8000/api/items")
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  renderTable(data.items)
+                })
+            }
+          })
+      }
+
+      function renderTable(items) {
+        var tbody = $("#items")
+
+        items.forEach((item)=>{
+          const tr = $(document.createElement("tr"))
+          tr.append("<td>" + item.name + "</td>")
+          tr.append("<td>" + item.description + "</td>")
+          tr.append("<td class='text-right'>" + item.price + "</td>")
+          tr.append("<td class='text-right'>" + item.quantity + "</td>")
+          tr.append("<td><a href='show_item.html?id=" + item.id + "'>Open</a></td>")
+
+          tbody.append(tr)
+        })
+      }
+
+      function prependTable(item) {
+        var tbody = $("#items")
+        const tr = $(document.createElement("tr"))
+        tr.append("<td>" + item.name + "</td>")
+        tr.append("<td>" + item.description + "</td>")
+        tr.append("<td class='text-right'>" + item.price + "</td>")
+        tr.append("<td class='text-right'>" + item.quantity + "</td>")
+        tr.append("<td><a href='show_item.html?id=" + item.id + "'>Open</a></td>")
+
+        tbody.prepend(tr)
+      }
+
+      $(document).ready(()=>{
+        getAllItems();
+
+        $("#save-btn").click(()=>{
+
+          const data = {
+            "barcode":$("#barcode").val(),
+            "name": $("#name").val(),
+            "description": $("#description").val(),
+            "price": $("#price").val(),
+            "quantity": $("#quantity").val(),
+            "units": $("#units").val()
+          }
+
+          console.log(data)
+
+          fetch("http://localhost:8000/api/items",{
+            "credentials":"omit",
+            "method":"POST",
+            "headers": {
+              "Accept":"application/json",
+              "Content-Type":"application/json"
+            },
+            "body": JSON.stringify(data)
+          }).then(request=>{
+            if(request.status==200) {
+              request.json()
+                .then(data=>{
+                  prependTable(data)
+                })
+            }
+          })
+
+          $("#createModal").modal('hide')
+        })
+      })
+
+
+    </script>
+    
+</body>
+</html>

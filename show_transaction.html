@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Mini Project Store</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Mini Project Store</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="items.html">Items</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">Customers</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="transactions.html">Transactions</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mt-2">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="transactions.html">Transactions</a></li>
+          <li class="breadcrumb-item active" aria-current="page">View Transaction</li>
+        </ol>
+      </nav>
+
+      <h1>View Transaction</h1>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="alert alert-info">Invoice No.# <span class="invoice_no"></span></div>
+        </div>
+        <div class="col-md-4">
+          <div class="alert alert-success">Customer: <span class="customer_name"></span></div>
+        </div>
+        <div class="col-md-4">
+          <div class="alert alert-warning">Date: <span class="date"></span></div>
+        </div>
+      </div>
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr class="bg-light text-dark">
+            
+            <th>Item</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+          
+          </tr>
+        </thead>
+
+        <tbody id="items"></tbody>
+      </table>
+
+    </div>
+
+    <script>
+      function getTransaction(id) {
+        fetch('http://localhost:8000/api/transactions/' + id)
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>renderTransaction(data))
+            }
+          })
+      }
+
+      function renderTransaction(txn) {
+        const tbody = $("#items")
+        $(".invoice_no").text(txn.invoice_no)
+        $(".customer_name").text(txn.customer.last_name + ", " + txn.customer.first_name)
+        $(".date").text(new Date(Date.parse(txn.created_at)).toDateString())
+
+        var total = 0;
+        txn.transaction_items.forEach((ti)=>{
+          const tr = $(document.createElement("tr"))
+          tr.append("<td>" + ti.itemName + "</td>")
+          tr.append("<td>" + ti.description + "</td>")
+          tr.append("<td>" + ti.priced_at + "</td>")
+          tr.append("<td>" + ti.quantity + "</td>")
+          tr.append("<td>" + (ti.quantity * ti.priced_at).toFixed(2) + "</td>")
+
+          tbody.append(tr)
+          total += (ti.quantity * ti.priced_at)
+        })
+
+        const ttr = $(document.createElement("tr"))
+        ttr.append("<th colspan='5'><h3 class='float-start'>TOTAL</h3> <h3 class='float-end'>" + total.toFixed(2) +"</h3></th>")
+        
+        tbody.append(ttr)
+        
+      }
+
+      $(document).ready(()=>{
+        const urlParams = new URLSearchParams(window.location.search);
+        const param_id = urlParams.get('id');
+
+        getTransaction(param_id)
+      })
+    </script>
+</body>
+</html>

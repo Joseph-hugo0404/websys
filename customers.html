@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>Mini Project Store</title>
+</head>
+<body>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="#">Mini Project Store</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="items.html">Items</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="customers.html">Customers</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="transactions.html">Transactions</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
+        <i class="fa fa-plus"></i> Create Customer
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="createCustomerModal" tabindex="-1" aria-labelledby="createCustomerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="createCustomerModalLabel">Create New Customer</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <div class="mb-3">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="address">Address</label>
+                <input type="text" id="address" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="phon">Phone</label>
+                <input type="text" id="phone" class="form-control">
+              </div>
+    
+              <div class="mb-3">
+                <label for="credit_limit">Credit Limit</label>
+                <input type="number" id="credit_limit" class="form-control">
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="save_btn">Save Customer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <h1>Customers</h1>
+      <hr>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Address</th>
+            <th class="text-end">Credit Limit</th>
+            <th class="text-center">...</th>
+          </tr>
+        </thead>
+        <tbody id="customers"></tbody>
+      </table>
+
+    </div>
+
+    <script>
+
+      function getAllCustomers() {
+        fetch("http://localhost:8000/api/customers")
+          .then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>{
+                  renderCustomerTable(data.customers)
+                })
+            }
+          })
+      }
+
+      function renderCustomerTable(customers) {
+        const tbody = $("#customers")
+
+        customers.forEach((cust)=>{
+          const tr = $(document.createElement("tr"))
+
+          tr.append("<td>" + cust.last_name + "</td>")
+          tr.append("<td>" + cust.first_name + "</td>")
+          tr.append("<td>" + cust.address + "</td>")
+          tr.append("<td class='text-end'>" + cust.credit_limit + "</td>")
+          tr.append("<td class='text-center'><a href='show_customer.html?id=" + cust.id + "' class='btn btn-sm btn-info'><i class='fa fa-eye'></i></a>")
+          
+          tbody.append(tr)
+        })
+      }
+
+      function prependCustomer(cust) {
+        const tbody = $("#customers")
+
+        const tr = $(document.createElement("tr"))
+        
+        tr.append("<td class='text-bg-info'>" + cust.last_name + "</td>")
+        tr.append("<td class='text-bg-info'>" + cust.first_name + "</td>")
+        tr.append("<td class='text-bg-info'>" + cust.address + "</td>")
+        tr.append("<td class='text-end text-bg-info'>" + cust.credit_limit + "</td>")
+        tr.append("<td class='text-center text-bg-info'><a href='show_customer.html?id=" + cust.id + "' class='btn btn-sm btn-info'><i class='fa fa-eye'></i></a>")
+        
+        tbody.prepend(tr)
+      }
+
+      function clearForm() {
+        $("#last_name").val(null)
+        $("#first_name").val(null)
+        $("#address").val(null)
+        $("#phone").val(null)
+        $("#credit_limit").val(null)
+      }
+
+      $(document).ready(()=>{
+        getAllCustomers()
+
+        $("#save_btn").click(()=>{
+          const data = {
+            "last_name":$("#last_name").val(),
+            "first_name":$("#first_name").val(),
+            "address":$("#address").val(),
+            "phone":$("#phone").val(),
+            "credit_limit":$("#credit_limit").val(),
+          }
+
+          fetch("http://localhost:8000/api/customers",{
+            credentials: "omit",
+            method: "POST",
+            body: JSON.stringify(data),
+            headers:{
+              'Accept':'application/json',
+              'Content-Type':'application/json'
+            }
+          }).then(response=>{
+            if(response.status==200) {
+              response.json()
+                .then(data=>prependCustomer(data))
+            }
+          })
+
+          clearForm()
+          $("#createCustomerModal").modal('hide')
+        })
+      })
+
+    </script>
+</body>
+</html>
