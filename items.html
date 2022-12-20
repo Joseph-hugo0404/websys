@@ -76,6 +76,20 @@
                   <label for="quantity">Quantity</label>
                   <input type="text" id="quantity" class="form-control">
                 </div>
+
+                <div class="mb-3">
+                  <label for="name">Units</label>
+                  <select name="units" id="units" class="form-select">
+                    <option>1 pair</option>
+                    <option>2 pairs</option>
+                    <option>3 pairs</option>
+                    <option>4 pairs</option>
+                    <option>5 pairs</option>
+                    <option>6 pairs</option>
+                    <option>7 pairs</option>
+                    <option>8 pairs</option>
+                  </select>
+                </div>
                 
 
               </div>
@@ -163,7 +177,7 @@
             "description": $("#description").val(),
             "price": $("#price").val(),
             "quantity": $("#quantity").val(),
-            "units": $("#units").val()
+            "units": $("#units").val(),
           }
 
           console.log(data)
