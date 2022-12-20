@@ -6,31 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"     integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <title>Mini Project Store</title>
+    <title>ECommerce</title>
 </head>
-<body>
+<body style="background-color: #a9f7b7;">
     
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-          <a class="navbar-brand" href="#">Mini Project Store</a>
+          <a class="navbar-brand" style="font-weight: bold;" href="#">ECommerce</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
               <li class="nav-item">
-                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" style="font-weight: bold;" href="index.html">Dashboard</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="items.html">Items</a>
+                <a class="nav-link" style="font-weight: bold;" href="items.html">Shoe Items</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="customers.html">Customers</a>
+                <a class="nav-link" style="font-weight: bold;" href="customers.html">Customers</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="transactions.html">Transactions</a>
+                <a class="nav-link" style="font-weight: bold;" href="transactions.html">CheckOut</a>
               </li>
             </ul>
           </div>
@@ -39,29 +40,24 @@
 
     <div class="container">
 
-      <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mt-2">
-          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-          <li class="breadcrumb-item"><a href="items.html">Items</a></li>
-          <li class="breadcrumb-item active" aria-current="page">View Item | <span class="item_name"></span></li>
-        </ol>
-      </nav>
+      
 
       <h1 class="mt-3 item_name text-uppercase"></h1>
       <hr>
+      
       <div class="row">
         <div class="col-md-4">
-
+                <div class="card">
+                <div class="card-body text-white" style="background-color: #082032;">
           <h3>Item Details</h3>
 
           <div class="mb-3">
-            <label for="name">Item name</label>
+            <label for="name">name</label>
             <input type="text" id="name" class="form-control">
           </div>
           
           <div class="mb-3">
-            <label for="description">Description</label>
+            <label for="description">Brands</label>
             <input type="text" id="description" class="form-control">
           </div>
 
@@ -75,11 +71,6 @@
             <input type="number" id="quantity" class="form-control">
           </div>
 
-          <div class="mb-3">
-            <label for="name">Units</label>
-            <select name="units" id="units" class="form-select">
-            </select>
-          </div>
 
           <div class="d-flex">
             <button class="btn btn-primary me-2" id="save_btn">
@@ -90,7 +81,8 @@
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
               <i class="fa fa-trash"></i> Delete
             </button>
-
+          </div>
+          </div>
             <!-- Modal -->
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
               <div class="modal-dialog">
@@ -121,8 +113,9 @@
         </div>
         <div class="col-md-8">
           <h3>Transaction History</h3>
-
-          <table class="table table-striped">
+          <div class="card">
+            <div class="card-body" style="background-color: #082032;">
+          <table class="table table-dark text-white">
             <thead>
               <tr>
                 <th>Date</th>
@@ -133,6 +126,8 @@
             </thead>
             <tbody id="transactions"></tbody>
           </table>
+        </div>
+        </div>
         </div>
       </div>
 
